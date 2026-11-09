@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leo/need 심화 지식 퀴즈</title>
+<style>
+*{box-sizing:border-box}
+:root{color-scheme:dark}
+body{margin:0;min-height:100vh;font-family:Arial,"Noto Sans KR",sans-serif;color:#f5f8ff;background:radial-gradient(circle at 20% 10%,#1d477c 0,#0b1739 42%,#160d35 100%);overflow-x:hidden}
+.stars{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.star{position:absolute;width:3px;height:3px;background:#fff;border-radius:50%;box-shadow:0 0 10px #7dc8ff;animation:twinkle 2s infinite alternate}
+@keyframes twinkle{from{opacity:.2;transform:scale(.7)}to{opacity:1;transform:scale(1.5)}}
+.container{position:relative;z-index:1;width:min(92%,780px);margin:auto;padding:32px 0 55px}
+h1{text-align:center;font-size:clamp(27px,5vw,42px);color:#bce8ff;text-shadow:0 0 20px #459bff;margin-bottom:8px}
+.subtitle{text-align:center;color:#c8d9ff;margin:0 0 30px}
+.panel{background:rgba(9,24,65,.91);border:1px solid rgba(130,190,255,.45);border-radius:20px;padding:clamp(19px,4vw,30px);box-shadow:0 0 30px #388bff2e;backdrop-filter:blur(10px)}
+button{cursor:pointer;border:0;border-radius:12px;padding:14px 18px;font-size:16px;font-weight:bold;transition:.18s}
+button:hover{transform:translateY(-2px);filter:brightness(1.15)}
+button:focus-visible,textarea:focus-visible{outline:3px solid #a8e4ff;outline-offset:3px}
+.primary,.next-button{display:block;width:100%;margin-top:22px;color:white;background:linear-gradient(90deg,#2789ff,#7658e9)}
+.hidden{display:none!important}
+.rules{line-height:2;color:#d4e4ff;margin-top:22px}
+.top-info{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:20px;color:#a9d8ff;font-weight:bold}
+.timer{font-size:21px;color:white;text-shadow:0 0 10px #50aaff;font-variant-numeric:tabular-nums}
+.progress-bg{height:9px;background:#263b70;border-radius:20px;overflow:hidden;margin-bottom:23px}
+.progress{height:100%;width:0;background:linear-gradient(90deg,#42baff,#9a73ff);transition:width .3s}
+.question{font-size:clamp(20px,4vw,26px);line-height:1.65;margin:22px 0;color:white;font-weight:bold;overflow-wrap:anywhere}
+.options{display:grid;gap:11px}
+.option{width:100%;text-align:left;color:white;background:#305b9ea6;border:1px solid #578acb;font-size:17px;line-height:1.5}
+.option .number{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;margin-right:10px;background:#3989ff;border-radius:8px}
+.option:disabled{cursor:default;opacity:1}
+.option.correct{background:#126b69;border-color:#56e6cf}
+.option.wrong{background:#803c65;border-color:#ff8eb7}
+textarea{width:100%;min-height:135px;resize:vertical;padding:15px;border:1px solid #689bdc;border-radius:12px;background:#102650;color:white;font-size:16px;line-height:1.6}
+textarea::placeholder{color:#a5b8d7}
+.feedback{margin-top:20px;padding:17px;background:#274b87b3;border-radius:12px;line-height:1.7;overflow-wrap:anywhere}
+.feedback h3{margin:0 0 8px}
+.feedback p{margin:0}
+.note{font-size:13px;color:#b8cbea;margin-top:10px}
+.result-number{font-size:clamp(42px,9vw,58px);font-weight:bold;text-align:center;color:#8fd4ff;text-shadow:0 0 20px #3989ff;margin:18px 0}
+.result-message{text-align:center;font-size:23px;color:#a8dfff;margin:18px 0}
+.result-info{background:#142d5b;padding:15px;border-radius:12px;margin-top:10px;display:flex;justify-content:space-between;gap:12px}
+.review{margin-top:22px}
+.review-item{padding:14px 0;border-bottom:1px solid #ffffff20;line-height:1.65}
+.review-item:last-child{border-bottom:0}
+.small{font-size:13px;color:#bdd1f1}
+@media(max-width:480px){.option{font-size:15px}.container{padding-top:22px}}
+</style>
+</head>
+<body>
+<div class="stars" id="stars" aria-hidden="true"></div>
+<main class="container">
+<h1>Leo/need 심화 지식 퀴즈</h1>
+<p class="subtitle">별빛 속에서 펼쳐지는 고난도 도전 ✦</p>
+
+<section id="startScreen" class="panel">
+<h2 style="text-align:center">🌌 도전 시작</h2>
+<p style="text-align:center;color:#c8d9ff">Leo/need의 멤버와 설정을 얼마나 정확히 알고 있을까?</p>
+<div class="rules">
+✦ 총 20문제 · 객관식 15문제 + 서술형 5문제<br>
+✦ 객관식은 5지선다, 서술형은 핵심어 자동 채점<br>
+✦ 서술형은 의미가 맞아도 표현에 따라 자동 채점에서 오답 처리될 수 있어요<br>
+✦ 합격 기준: 15문제 이상 정답<br>
+✦ 제한 시간 없음 · 객관식은 키보드 1~5로 선택 가능
+</div>
+<button type="button" class="primary" id="startButton">게임 시작하기</button>
+</section>
+
+<section id="quizScreen" class="panel hidden">
+<div class="top-info"><span id="questionNumber">문제 1 / 20</span><span class="timer" id="timer">00:00</span></div>
+<div class="progress-bg"><div class="progress" id="progress"></div></div>
+<p id="questionType" class="small">객관식 · 5지선다</p>
+<div class="question" id="questionText"></div>
+<div id="options" class="options"></div>
+<div id="essayArea" class="hidden">
+<textarea id="essayAnswer" placeholder="핵심 내용을 빠짐없이 작성하세요."></textarea>
+<button type="button" class="primary" id="submitEssay">답안 제출하기</button>
+<p class="note">서술형은 핵심어를 기준으로 자동 채점합니다. 동의어·문장 표현 차이는 완벽히 판별하지 못할 수 있습니다.</p>
+</div>
+<div id="feedback" class="feedback hidden" aria-live="polite">
+<h3 id="feedbackTitle"></h3><p id="feedbackText"></p>
+<button type="button" class="next-button" id="nextButton">다음 문제</button>
+</div>
+</section>
+
+<section id="resultScreen" class="panel hidden">
+<h2 style="text-align:center">🌠 퀴즈 결과</h2>
+<div class="result-number" id="finalScore">0 / 20</div>
+<div class="result-message" id="resultMessage"></div>
+<div class="result-info"><span>총 소요 시간</span><strong id="finalTime">00:00</strong></div>
+<div class="result-info"><span>정답 개수</span><strong id="correctCount">0문제</strong></div>
+<div class="result-info"><span>오답 개수</span><strong id="wrongCount">20문제</strong></div>
+<div class="result-info"><span>정답률</span><strong id="accuracy">0%</strong></div>
+<div id="review" class="review"></div>
+<button type="button" class="primary" id="restartButton">다시 도전하기</button>
+</section>
+</main>
+
+<script>
+"use strict";
+
+/* 문제 데이터: 객관식 15문제 + 서술형 5문제 */
+const questions = [
+ {type:"choice",question:"Leo/need의 네 멤버와 각자의 대표적인 밴드 내 파트를 올바르게 연결한 것은?",options:["호시노 이치카-기타·보컬 / 텐마 사키-키보드 / 모치즈키 호나미-드럼 / 히노모리 시호-베이스","호시노 이치카-베이스 / 텐마 사키-드럼 / 모치즈키 호나미-키보드 / 히노모리 시호-기타·보컬","호시노 이치카-키보드 / 텐마 사키-기타·보컬 / 모치즈키 호나미-베이스 / 히노모리 시호-드럼","호시노 이치카-드럼 / 텐마 사키-베이스 / 모치즈키 호나미-기타·보컬 / 히노모리 시호-키보드","네 명 모두 보컬이며 악기 파트는 고정되어 있지 않다"],answer:0,explanation:"이치카는 기타와 보컬, 사키는 키보드, 호나미는 드럼, 시호는 베이스를 담당합니다."},
+ {type:"choice",question:"Leo/need의 네 멤버 관계를 설명하는 데 가장 핵심적인 출발점은?",options:["같은 오디션 프로그램에서 처음 만난 라이벌","어린 시절부터 알고 지낸 소꿉친구 사이였다는 점","프로 음악가의 소개로 결성된 프로젝트 팀","서로 다른 학교의 학생들이 온라인에서 결성한 밴드","게임 대회 우승을 위해 급조된 팀"],answer:1,explanation:"Leo/need는 어린 시절부터 인연이 있던 이치카, 사키, 호나미, 시호가 중심이 되어 다시 관계를 이어 가는 밴드입니다."},
+ {type:"choice",question:"다음 중 Leo/need 멤버와 악기의 연결이 틀린 것은?",options:["이치카 — 기타","사키 — 키보드","호나미 — 드럼","시호 — 베이스","시호 — 키보드"],answer:4,explanation:"시호의 밴드 파트는 베이스입니다. 키보드는 사키가 담당합니다."},
+ {type:"choice",question:"Leo/need라는 밴드 이름을 이루는 표기 형태로 맞는 것은?",options:["Leo&Need","Leo-Need","Leo/need","LEO_NEED","Leo.need"],answer:2,explanation:"밴드 이름은 슬래시를 포함한 'Leo/need'로 표기합니다."},
+ {type:"choice",question:"다음 중 Leo/need의 멤버가 아닌 인물은?",options:["호시노 이치카","텐마 사키","모치즈키 호나미","히노모리 시호","아즈사와 코하네"],answer:4,explanation:"코하네는 Vivid BAD SQUAD의 멤버이며 Leo/need 소속이 아닙니다."},
+ {type:"choice",question:"Leo/need의 음악적 편성에 대한 설명으로 가장 정확한 것은?",options:["기타·키보드·드럼·베이스를 중심으로 한 밴드 편성","바이올린·첼로·플루트·하프 중심의 실내악 편성","DJ·신시사이저·샘플러만 사용하는 전자 음악 팀","피아노와 현악 4중주로만 구성된 팀","어쿠스틱 기타 두 대와 보컬만으로 구성된 듀오"],answer:0,explanation:"네 멤버가 기타·키보드·드럼·베이스를 맡는 밴드 구성이 핵심입니다."},
+ {type:"choice",question:"다음 인물 중 Leo/need에서 보컬과 기타를 맡는 멤버는?",options:["텐마 사키","모치즈키 호나미","히노모리 시호","호시노 이치카","모두 같은 비중으로 담당"],answer:3,explanation:"호시노 이치카가 기타와 보컬을 맡습니다."},
+ {type:"choice",question:"다음 중 각 멤버의 이름과 성을 올바르게 짝지은 것은?",options:["이치카 — 텐마","사키 — 모치즈키","호나미 — 히노모리","시호 — 호시노","사키 — 텐마"],answer:4,explanation:"정확한 이름은 호시노 이치카, 텐마 사키, 모치즈키 호나미, 히노모리 시호입니다."},
+ {type:"choice",question:"Leo/need를 다른 유닛과 구별하는 설명으로 가장 적절한 것은?",options:["스트리트 음악을 중심으로 활동하는 유닛","어린 시절의 인연과 밴드 활동을 중심으로 이야기가 전개되는 유닛","아이돌 그룹의 무대 퍼포먼스를 중심으로 한 유닛","테마파크 쇼를 중심으로 활동하는 유닛","온라인 게임 방송을 중심으로 결성된 유닛"],answer:1,explanation:"Leo/need의 이야기에는 소꿉친구였던 멤버들의 관계와 밴드 활동이 중요한 축으로 등장합니다."},
+ {type:"choice",question:"다음 중 Leo/need 멤버 네 명만으로 이루어진 조합은?",options:["이치카·사키·호나미·시호","이치카·사키·코하네·시호","사키·호나미·에나·시호","이치카·미쿠·호나미·시호","이치카·사키·호나미·츠카사"],answer:0,explanation:"Leo/need의 멤버는 이치카, 사키, 호나미, 시호 네 명입니다."},
+ {type:"choice",question:"악기 파트를 기준으로 볼 때, 리듬 섹션의 두 파트를 담당하는 조합은?",options:["이치카와 사키","사키와 호나미","호나미와 시호","시호와 이치카","이치카와 호나미"],answer:2,explanation:"일반적인 밴드 편성에서 드럼과 베이스는 리듬 섹션을 구성하며, Leo/need에서는 호나미와 시호가 각각 담당합니다."},
+ {type:"choice",question:"다음 중 '멤버 — 담당 파트'의 연결이 모두 올바른 선택지는?",options:["이치카-보컬/기타, 사키-키보드, 호나미-드럼, 시호-베이스","이치카-보컬/베이스, 사키-드럼, 호나미-기타, 시호-키보드","이치카-키보드, 사키-보컬/기타, 호나미-베이스, 시호-드럼","이치카-드럼, 사키-키보드, 호나미-베이스, 시호-보컬/기타","이치카-보컬/기타, 사키-베이스, 호나미-키보드, 시호-드럼"],answer:0,explanation:"네 파트의 정확한 연결은 이치카-보컬/기타, 사키-키보드, 호나미-드럼, 시호-베이스입니다."},
+ {type:"choice",question:"다음 설명 중 Leo/need의 결성 배경을 가장 잘 요약한 것은?",options:["서로 처음 보는 멤버들이 오디션으로 모였다","어린 시절의 친구들이 관계의 변화를 겪은 뒤 음악을 통해 다시 연결된다","프로 데뷔를 마친 연주자들이 은퇴 후 모였다","한 명의 프로듀서가 네 명을 일방적으로 선발했다","학교 축제 하루만을 위해 만들어진 임시 밴드다"],answer:1,explanation:"어린 시절 친구였던 멤버들이 여러 갈등과 변화를 거치며 음악으로 다시 이어지는 흐름이 중심입니다."},
+ {type:"choice",question:"Leo/need 멤버 중 드럼을 담당하는 인물의 풀네임은?",options:["호시노 이치카","텐마 사키","모치즈키 호나미","히노모리 시호","아즈사와 코하네"],answer:2,explanation:"드럼 담당은 모치즈키 호나미입니다."},
+ {type:"choice",question:"다음 중 Leo/need에 대한 설명으로 사실과 가장 거리가 먼 것은?",options:["네 명의 멤버로 이루어져 있다","밴드 활동이 이야기의 중요한 요소다","멤버들이 어린 시절부터 인연을 맺었다","시호가 베이스를 담당한다","코하네가 정식 멤버로 기타를 담당한다"],answer:4,explanation:"코하네는 Leo/need 멤버가 아닙니다."},
+ {type:"essay",question:"Leo/need의 네 멤버 이름을 모두 쓰고, 각 멤버의 담당 파트를 빠짐없이 연결해 서술하세요.",acceptedAnswers:["호시노 이치카","텐마 사키","모치즈키 호나미","히노모리 시호","기타","보컬","키보드","드럼","베이스"],requiredGroups:[["호시노 이치카","이치카"],["텐마 사키","사키"],["모치즈키 호나미","호나미"],["히노모리 시호","시호"],["기타"],["키보드"],["드럼"],["베이스"]],explanation:"호시노 이치카-기타·보컬, 텐마 사키-키보드, 모치즈키 호나미-드럼, 히노모리 시호-베이스."},
+ {type:"essay",question:"Leo/need의 네 멤버가 처음부터 서로 모르는 사이였던 것이 아닌 이유를, 이들의 과거 관계를 중심으로 설명하세요.",requiredGroups:[["어린 시절","어릴 때","소꿉친구"],["친구"]],explanation:"네 사람은 어린 시절부터 알고 지낸 소꿉친구였으며, 그 관계가 밴드 이야기의 중요한 출발점입니다."},
+ {type:"essay",question:"Leo/need의 밴드 편성을 구성하는 네 가지 악기 파트를 모두 쓰고, 각 파트를 담당하는 멤버를 연결하세요.",requiredGroups:[["이치카"],["사키"],["호나미"],["시호"],["기타"],["키보드"],["드럼"],["베이스"]],explanation:"이치카-기타(및 보컬), 사키-키보드, 호나미-드럼, 시호-베이스입니다."},
+ {type:"essay",question:"Leo/need의 멤버가 아닌 인물 한 명을 예로 들고, 그 인물이 Leo/need 소속이 아니라는 점을 구분해 설명하세요.",requiredGroups:[["코하네","아즈사와 코하네"],["비비드 배드 스쿼드","Vivid BAD SQUAD"]],explanation:"예: 아즈사와 코하네는 Vivid BAD SQUAD의 멤버이며 Leo/need 소속이 아닙니다."},
+ {type:"essay",question:"Leo/need의 밴드 이름을 정확한 대소문자와 기호를 포함해 쓰고, 이름의 가운데에 어떤 기호가 들어가는지 설명하세요.",requiredGroups:[["leo/need","Leo/need"],["/","슬래시"]],explanation:"정확한 표기는 Leo/need이며 가운데에는 슬래시(/)가 들어갑니다."}
+];
+
+let currentQuestion=0,score=0,elapsedSeconds=0,timerInterval=null,answered=false;
+let userResults=[];
+
+const $=id=>document.getElementById(id);
+for(let i=0;i<100;i++){
+ const star=document.createElement("div");star.className="star";
+ star.style.left=Math.random()*100+"%";star.style.top=Math.random()*100+"%";
+ star.style.animationDelay=Math.random()*3+"s";$("stars").appendChild(star);
+}
+function showScreen(id){
+ document.querySelectorAll(".container > section").forEach(s=>s.classList.add("hidden"));
+ $(id).classList.remove("hidden");
+}
+function formatTime(seconds){
+ return String(Math.floor(seconds/60)).padStart(2,"0")+":"+String(seconds%60).padStart(2,"0");
+}
+function startTimer(){
+ clearInterval(timerInterval);
+ timerInterval=setInterval(()=>{$("timer").textContent=formatTime(++elapsedSeconds)},1000);
+}
+function startGame(){
+ currentQuestion=0;score=0;elapsedSeconds=0;userResults=[];
+ $("timer").textContent="00:00";showScreen("quizScreen");startTimer();showQuestion();
+}
+function showQuestion(){
+ answered=false;
+ const q=questions[currentQuestion];
+ $("questionNumber").textContent=`문제 ${currentQuestion+1} / ${questions.length}`;
+ $("progress").style.width=((currentQuestion+1)/questions.length*100)+"%";
+ $("questionText").textContent=q.question;
+ $("questionType").textContent=q.type==="choice"?"객관식 · 5지선다":"서술형";
+ $("feedback").classList.add("hidden");$("essayArea").classList.add("hidden");
+ $("options").replaceChildren();
+ if(q.type==="choice"){
+  q.options.forEach((option,index)=>{
+   const button=document.createElement("button");button.className="option";
+   const number=document.createElement("span");number.className="number";number.textContent=index+1;
+   button.append(number,document.createTextNode(option));
+   button.addEventListener("click",()=>answerChoice(index));$("options").appendChild(button);
+  });
+  $("options").classList.remove("hidden");
+ }else{
+  $("options").classList.add("hidden");$("essayAnswer").value="";$("essayArea").classList.remove("hidden");
+  $("essayAnswer").focus();
+ }
+}
+function showFeedback(isCorrect,message){
+ answered=true;if(isCorrect)score++;
+ userResults.push({question:questions[currentQuestion].question,correct:isCorrect,message});
+ $("feedbackTitle").textContent=isCorrect?"정답입니다! ✨":"아쉽지만 오답입니다.";
+ $("feedbackText").textContent=message+" 정답 해설: "+questions[currentQuestion].explanation;
+ $("feedback").classList.remove("hidden");
+ $("options").querySelectorAll("button").forEach(b=>b.disabled=true);
+ $("submitEssay").disabled=true;
+ $("submitEssay").style.opacity=".55";
+}
+function answerChoice(index){
+ if(answered)return;
+ const q=questions[currentQuestion],buttons=[...$("options").querySelectorAll("button")];
+ buttons.forEach((b,i)=>{if(i===q.answer)b.classList.add("correct");else if(i===index)b.classList.add("wrong")});
+ showFeedback(index===q.answer,index===q.answer?"선택한 답이 맞습니다.":"정답은 "+(q.answer+1)+"번입니다.");
+}
+function normalize(text){
+ return text.toLowerCase().replace(/\s+/g,"").replace(/[.,!?·ㆍ\-_'"]/g,"");
+}
+function answerEssay(){
+ if(answered)return;
+ const q=questions[currentQuestion],answer=normalize($("essayAnswer").value);
+ if(!answer){$("essayAnswer").focus();return}
+ const groups=q.requiredGroups||[];
+ const matched=groups.filter(group=>group.some(keyword=>answer.includes(normalize(keyword)))).length;
+ const isCorrect=matched===groups.length;
+ showFeedback(isCorrect,`핵심어 ${matched}/${groups.length}개 확인`);
+}
+function nextQuestion(){
+ if(!answered)return;
+ $("submitEssay").disabled=false;$("submitEssay").style.opacity="1";
+ if(currentQuestion<questions.length-1){currentQuestion++;showQuestion()}
+ else finishGame();
+}
+function finishGame(){
+ clearInterval(timerInterval);showScreen("resultScreen");
+ const total=questions.length,wrong=total-score;
+ $("finalScore").textContent=`${score} / ${total}`;
+ $("finalTime").textContent=formatTime(elapsedSeconds);
+ $("correctCount").textContent=score+"문제";$("wrongCount").textContent=wrong+"문제";
+ $("accuracy").textContent=Math.round(score/total*100)+"%";
+ $("resultMessage").textContent=score>=15?"🌟 합격! Leo/need 지식이 대단해요!":score>=10?"🎸 훌륭해요! 조금만 더 공부해 봐요.":"✨ 다시 도전하면 더 잘할 수 있어요!";
+ $("review").replaceChildren();
+ const heading=document.createElement("h3");heading.textContent="문제별 결과";$("review").appendChild(heading);
+ userResults.forEach((r,i)=>{
+  const item=document.createElement("div");item.className="review-item";
+  const strong=document.createElement("strong");strong.textContent=`${i+1}. ${r.correct?"정답":"오답"} `;
+  const span=document.createElement("span");span.textContent=r.question;
+  item.append(strong,span);$("review").appendChild(item);
+ });
+}
+function initializeQuiz(){
+ // 버튼을 명시적으로 연결하고, 시작 버튼은 전역 함수로도 호출 가능하게 합니다.
+ $("startButton").addEventListener("click", startGame);
+ $("submitEssay").addEventListener("click", answerEssay);
+ $("nextButton").addEventListener("click", nextQuestion);
+ $("restartButton").addEventListener("click",()=>{
+  clearInterval(timerInterval);
+  showScreen("startScreen");
+ });
+ document.addEventListener("keydown",event=>{
+  if($("quizScreen").classList.contains("hidden")||answered)return;
+  const q=questions[currentQuestion];
+  if(q.type==="choice"&&["1","2","3","4","5"].includes(event.key)){
+   const index=Number(event.key)-1;
+   if(q.options[index]!==undefined)answerChoice(index);
+  }
+  if(q.type==="essay"&&event.key==="Enter"&&(event.ctrlKey||event.metaKey))answerEssay();
+ });
+}
+if(document.readyState==="loading"){
+ document.addEventListener("DOMContentLoaded", initializeQuiz, {once:true});
+}else{
+ initializeQuiz();
+}
+window.addEventListener("error",event=>{
+ const start=$("startScreen");
+ if(start && !start.classList.contains("hidden")){
+  const notice=document.createElement("p");
+  notice.className="note";
+  notice.textContent="게임을 불러오는 중 오류가 발생했습니다. 파일을 다시 열어 주세요.";
+  start.appendChild(notice);
+ }
+});
+</script>
+</body>
+</html>
